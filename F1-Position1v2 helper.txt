@@ -1,0 +1,51 @@
+{% set driver_id = states('sensor.f1_race_position_1') %}
+    {% if driver_id == "4665" %} Max Verstappen
+    {% elif driver_id == "4472" %} Sergio Perez
+    {% elif driver_id == "4686" %} Carlos Sainz
+    {% elif driver_id == "5498" %} Charles Leclerc
+    {% elif driver_id == "348" %} Fernando Alonso
+    {% elif driver_id == "4775" %} Lance Stroll
+    {% elif driver_id == "4678" %} Esteban Ocon
+    {% elif driver_id == "5501" %} Pierre Gasly
+    {% elif driver_id == "5579" %} Lando Norris
+    {% elif driver_id == "5752" %} Oscar Piastri
+    {% elif driver_id == "5592" %} Alex Albon
+    {% elif driver_id == "5823" %} Franco Colapinto
+    {% elif driver_id == "4396" %} N. Hülkenberg
+    {% elif driver_id == "4623" %} Kevin Magnussen
+    {% elif driver_id == "4520" %} Valtteri Bottas
+    {% elif driver_id == "5682" %} Zhou Guanyu
+    {% elif driver_id == "868" %} Lewis Hamilton
+    {% elif driver_id == "5503" %} George Russell
+    {% elif driver_id == "5741" %} Liam Lawson
+    {% elif driver_id == "5652" %} Yuki Tsunoda
+    {% else %} Unknown Driver
+    {% endif %}
+
+    {% set team = states('sensor.f1_race_position_1') %}
+    {% if team in ["4665", "4472"] %} Red Bull
+    {% elif team in ["4686", "5498"] %} Ferrari
+    {% elif team in ["348", "4775"] %} Aston Martin
+    {% elif team in ["4678", "5501"] %} Alpeen
+    {% elif team in ["5579", "5752"] %} Mclaren
+    {% elif team in ["5592", "5823"] %} Williams
+    {% elif team in ["4396", "4623"] %} Haas
+    {% elif team in ["4520", "5682"] %} Kick Sauber
+    {% elif team in ["868", "5503"] %} Mercedes
+    {% elif team in ["5741", "5652"] %} RB
+    {% else %} Unknown Team
+    {% endif %}
+    
+    {% set color = states('sensor.f1_race_position_1') %}
+    {% if color in ["4665", "4472"] %} Dark Blue
+    {% elif color in ["4686", "5498"] %} Red
+    {% elif color in ["348", "4775"] %} Lime Green
+    {% elif color in ["4678", "5501"] %} Pink
+    {% elif color in ["5579", "5752"] %} Orange
+    {% elif color in ["5592", "5823"] %} Light Blue
+    {% elif color in ["4396", "4623"] %} Grey
+    {% elif color in ["4520", "5682"] %} Green
+    {% elif color in ["868", "5503"] %} Cyan
+    {% elif color in ["5741", "5652"] %} Yellow
+    {% else %} Unknown Color
+    {% endif %}

@@ -1,0 +1,315 @@
+I created a function that tracks an F1 race, pulls the top 3 driver positions, announces the top 3 on Alexa and runs driver/team colored lights around a LIFX light strip whenever positions in the race change.  It uses HA, the Team Tracker and LIFX integrations.
+
+Here's how I did it.
+
+Created a helper object to get the driver positions from The HA Team Tracker HACS integration.  Setup an object for F1 and Driver ID.  
+You can get the driver ID from parsing this JSON link.  I picked Lando Norris - ID - 5579. You set this up in Team Tracker to create a sensor for this driver.  I named it Norris. You only need 1 driver ID as the entity captures the top 10 positions via the last_play attribute.
+
+https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard
+
+last_play: >-
+  1. M. Verstappen,   2. E. Ocon,   3. P. Gasly,   4. G. Russell,   5. C.
+  Leclerc,   6. L. Norris,   7. Y. Tsunoda,   8. O. Piastri,   9. L. Lawson,  
+  10. L. Hamilton,  
+
+From here I created three helper template objects to capture the driver ID for 1st, 2nd and 3rd place.  
+
+Here is the one for 1st place. It takes the data from last_play and converts it to driver ID.
+
+{% set last_play = state_attr('sensor.norris', 'last_play') %}
+{% if last_play is not none %}
+  {% set driver_id = last_play.split(',') %}
+  {% if driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "M. Verstappen" %}4665
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "S. Pérez" %}4472
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Sainz" %}4686
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Leclerc" %}5498
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Alonso" %}348
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Stroll" %}4775
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "E. Ocon" %}4678
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "P. Gasly" %}5501
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Norris" %}5579
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "O. Piastri" %}5752
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "A. Albon" %}5592
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Colapinto" %}5823
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "N. Hülkenberg" %}4396
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "K. Magnussen" %}4623
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "V. Bottas" %}4520
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "Z. Guanyu" %}5682
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Hamilton" %}868
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "G. Russell" %}5503
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Lawson" %}5741
+  {% elif driver_id[0] | trim | regex_replace("^\\d+\\.\\s*", "") == "Y. Tsunoda" %}5652
+  {% endif %}
+{% else %}
+  Unknown driver or data unavailable
+{% endif %}
+{% endif %}
+
+Here is for position 2
+
+{% set last_play = state_attr('sensor.norris', 'last_play') %}
+{% if last_play is not none %}
+  {% set driver_id = last_play.split(',') %}
+  {% if driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "M. Verstappen" %}4665
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "S. Pérez" %}4472
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Sainz" %}4686
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Leclerc" %}5498
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Alonso" %}348
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Stroll" %}4775
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "E. Ocon" %}4678
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "P. Gasly" %}5501
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Norris" %}5579
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "O. Piastri" %}5752
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "A. Albon" %}5592
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Colapinto" %}5823
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "N. Hülkenberg" %}4396
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "K. Magnussen" %}4623
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "V. Bottas" %}4520
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "Z. Guanyu" %}5682
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Hamilton" %}868
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "G. Russell" %}5503
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Lawson" %}5741
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "Y. Tsunoda" %}5652
+  {% endif %}
+{% else %}
+  Unknown driver or data unavailable
+{% endif %}
+
+Here is for position 3
+
+{% set last_play = state_attr('sensor.norris', 'last_play') %}
+{% if last_play is not none %}
+  {% set driver_id = last_play.split(',') %}
+  {% if driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "M. Verstappen" %}4665
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "S. Pérez" %}4472
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Sainz" %}4686
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Leclerc" %}5498
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Alonso" %}348
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Stroll" %}4775
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "E. Ocon" %}4678
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "P. Gasly" %}5501
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Norris" %}5579
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "O. Piastri" %}5752
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "A. Albon" %}5592
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Colapinto" %}5823
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "N. Hülkenberg" %}4396
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "K. Magnussen" %}4623
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "V. Bottas" %}4520
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "Z. Guanyu" %}5682
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Hamilton" %}868
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "G. Russell" %}5503
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Lawson" %}5741
+  {% elif driver_id[2] | trim | regex_replace("^\\d+\\.\\s*", "") == "Y. Tsunoda" %}5652
+  {% endif %}
+{% else %}
+  Unknown driver or data unavailable
+{% endif %}
+
+Then I created 3 other helper objects to capture the full name, team name and color from the driver ID for the top 3 positions.  
+Here is the one for 1st place.
+
+{% set driver_id = states('sensor.f1_race_position_1') %}
+    {% if driver_id == "4665" %} Max Verstappen
+    {% elif driver_id == "4472" %} Sergio Perez
+    {% elif driver_id == "4686" %} Carlos Sainz
+    {% elif driver_id == "5498" %} Charles Leclerc
+    {% elif driver_id == "348" %} Fernando Alonso
+    {% elif driver_id == "4775" %} Lance Stroll
+    {% elif driver_id == "4678" %} Esteban Ocon
+    {% elif driver_id == "5501" %} Pierre Gasly
+    {% elif driver_id == "5579" %} Lando Norris
+    {% elif driver_id == "5752" %} Oscar Piastri
+    {% elif driver_id == "5592" %} Alex Albon
+    {% elif driver_id == "5823" %} Franco Colapinto
+    {% elif driver_id == "4396" %} N. Hülkenberg
+    {% elif driver_id == "4623" %} Kevin Magnussen
+    {% elif driver_id == "4520" %} Valtteri Bottas
+    {% elif driver_id == "5682" %} Zhou Guanyu
+    {% elif driver_id == "868" %} Lewis Hamilton
+    {% elif driver_id == "5503" %} George Russell
+    {% elif driver_id == "5741" %} Liam Lawson
+    {% elif driver_id == "5652" %} Yuki Tsunoda
+    {% else %} Unknown Driver
+    {% endif %}
+
+    {% set team = states('sensor.f1_race_position_1') %}
+    {% if team in ["4665", "4472"] %} Red Bull
+    {% elif team in ["4686", "5498"] %} Ferrari
+    {% elif team in ["348", "4775"] %} Aston Martin
+    {% elif team in ["4678", "5501"] %} Alpeen
+    {% elif team in ["5579", "5752"] %} Mclaren
+    {% elif team in ["5592", "5823"] %} Williams
+    {% elif team in ["4396", "4623"] %} Haas
+    {% elif team in ["4520", "5682"] %} Kick Sauber
+    {% elif team in ["868", "5503"] %} Mercedes
+    {% elif team in ["5741", "5652"] %} RB
+    {% else %} Unknown Team
+    {% endif %}
+    
+    {% set color = states('sensor.f1_race_position_1') %}
+    {% if color in ["4665", "4472"] %} Dark Blue
+    {% elif color in ["4686", "5498"] %} Red
+    {% elif color in ["348", "4775"] %} Lime Green
+    {% elif color in ["4678", "5501"] %} Pink
+    {% elif color in ["5579", "5752"] %} Orange
+    {% elif color in ["5592", "5823"] %} Light Blue
+    {% elif color in ["4396", "4623"] %} Grey
+    {% elif color in ["4520", "5682"] %} Green
+    {% elif color in ["868", "5503"] %} Cyan
+    {% elif color in ["5741", "5652"] %} Yellow
+    {% else %} Unknown Color
+    {% endif %}
+
+This yields:  F1-Position1v2 Max Verstappen Red Bull Dark Blue
+
+Then an automation pulls it all together.
+
+Checks if any of the top 3 positions change as a trigger
+Updates the light strip colors to the driver and moves them around and around (see below)
+Runs a F1 race car sound
+Announces the driver positions
+      Example:  P1 Max Verstappen Red Bull Blue ,etc
+
+alias: f1_top_3_drivers
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - sensor.f1_position1v2
+      - sensor.f1_position2v2
+      - sensor.f1_position3v2
+conditions: []
+actions:
+  - action: script.race_lifx_lights
+    data: {}
+  - alias: F1 Race
+    data:
+      target:
+        - media_player.livingecho
+       data:
+        type: tts
+      message: >-
+        <audio
+        src='.....bu.casa/local/media/f1-car.mp3'/>
+    action: notify.alexa_media
+    enabled: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - alias: Top 3 Drivers
+    data:
+      target:
+        - media_player.livingecho
+      data:
+        type: tts
+      message: |-
+        P One {{ states('sensor.f1_position1v2') }}
+        <break time="1s"/>
+        P Two {{ states('sensor.f1_position2v2') }}
+        <break time="1s"/>
+        and P Three {{ states('sensor.f1_position3v2') }}
+    action: notify.alexa_media
+mode: single
+
+Script to Update Light Colors based upon positions
+It pulls the color string off of the position helper object for example: 
+
+F1-Position1v2 = Max Verstappen Red Bull Dark Blue = Dark Blue
+
+alias: F1 Team Light Colors
+sequence:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 1
+      kelvin: 6500
+    target:
+      device_id:
+
+    enabled: true
+  - alias: 3rd Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 0
+        - 1
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position3v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+  - alias: 2nd Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 4
+        - 5
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position2v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+  - alias: 1st Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 8
+        - 9
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position1v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+mode: restart
+description: ""
+

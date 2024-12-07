@@ -1,0 +1,15 @@
+alias: Race LIFX Lights
+sequence:
+  - data:
+      direction: left
+      power_on: true
+      speed: 10
+    action: lifx.effect_move
+    target:
+      entity_id: light.hype_strip
+  - action: lifx.effect_stop
+    target:
+      device_id: 7026f9127ea65abcbdc87cd25810bbae
+    data: {}
+    enabled: false
+description: ""

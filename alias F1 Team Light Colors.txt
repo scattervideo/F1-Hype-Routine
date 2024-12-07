@@ -1,0 +1,95 @@
+alias: F1 Team Light Colors
+sequence:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 1
+      kelvin: 6500
+    target:
+      device_id:
+        - 7026f9127ea65abcbdc87cd25810bbae
+        - d901d7c5aed0ee7c1e69bdf892b2173b
+    enabled: true
+  - alias: 3rd Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 0
+        - 1
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position3v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+  - alias: 2nd Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 4
+        - 5
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position2v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+  - alias: 1st Place Team Color
+    target:
+      entity_id: light.hype_strip
+    data:
+      zones:
+        - 8
+        - 9
+      rgb_color: >
+        {% set color_name = states('sensor.f1_position1v2').split()[-1] | lower
+        %} {% set colors = {
+          'red': [255,0,0],
+          'dark blue': [10,24,210],
+          'lime green': [117,179,86],
+          'light blue': [0,0,255],
+          'grey': [128,128,128],
+          'cyan': [0,255,255],          
+          'green': [0,255,0],
+          'blue': [0,0,255],
+          'pink': [255,192,203],
+          'yellow': [255,255,0],
+          'orange': [255,165,0]          
+          } %}    
+        {{ colors.get(color_name, [0,0,255]) }}
+      transition: 0
+      brightness_pct: 20
+    action: lifx.set_state
+    enabled: true
+mode: restart
+description: ""

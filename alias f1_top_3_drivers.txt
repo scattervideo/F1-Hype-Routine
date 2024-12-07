@@ -1,0 +1,68 @@
+alias: f1_top_3_drivers
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - input_number.race_1
+      - input_number.race_2
+      - input_number.race_3
+conditions: []
+actions:
+  - action: script.redbull_light_colors
+    metadata: {}
+    data: {}
+  - action: script.race_lifx_lights
+    data: {}
+  - alias: F1 Race
+    data:
+      target:
+        - media_player.office
+        - media_player.livingecho
+        - media_player.kitchen_echo2
+      data:
+        type: tts
+      message: >-
+        <audio
+        src='https://YOURSERVER.nabu.casa/local/media/f1-car.mp3'/>
+    action: notify.alexa_media
+    enabled: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - alias: Top 3 Drivers
+    data:
+      target:
+        - media_player.office
+        - media_player.kitchen_echo2
+        - media_player.livingecho
+      data:
+        type: tts
+      message: |-
+        P One {{ states('sensor.f1_position1v2') }}
+        <break time="1s"/>
+        P Two {{ states('sensor.f1_position2v2') }}
+        <break time="1s"/>
+        and P Three {{ states('sensor.f1_position3v2') }}
+    action: notify.alexa_media
+  - alias: F1 Race
+    data:
+      target:
+        - media_player.office
+        - media_player.livingecho
+        - media_player.kitchen_echo2
+      data:
+        type: tts
+      message: >-
+        <audio
+        src='https://YOURSERVER.nabu.casa/local/media/f1-car.mp3'/>
+    action: notify.alexa_media
+    enabled: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+    enabled: false
+mode: single

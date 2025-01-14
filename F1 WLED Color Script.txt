@@ -1,0 +1,54 @@
+alias: F1 WLED Colors
+description: ""
+sequence:
+  - variables:
+      colors: |
+        {
+          "red": [255, 0, 0],
+          "dark blue": [10, 24, 210],
+          "lime green": [117, 179, 86],
+          "light blue": [0, 0, 255],
+          "grey": [128, 128, 128],
+          "cyan": [0, 255, 255],
+          "green": [0, 255, 0],
+          "blue": [0, 0, 255],
+          "pink": [255, 192, 203],
+          "yellow": [255, 255, 0],
+          "orange": [255, 165, 0]
+        }
+      color_name3: "{{ states('sensor.f1_position3v2').split()[-1] | lower }}"
+      result3: "{{ colors[color_name3] if color_name3 in colors else [0, 0, 255] }}"
+      color3_r: "{{result3[0]}}"
+      color3_g: "{{result3[1]}}"
+      color3_b: "{{result3[2]}}"
+      color_name2: "{{ states('sensor.f1_position2v2').split()[-1] | lower }}"
+      result2: "{{ colors[color_name2] if color_name2 in colors else [0, 0, 255] }}"
+      color2_r: "{{result2[0]}}"
+      color2_g: "{{result2[1]}}"
+      color2_b: "{{result2[2]}}"
+      color_name1: "{{ states('sensor.f1_position1v2').split()[-1] | lower }}"
+      result1: "{{ colors[color_name1] if color_name1 in colors else [0, 0, 255] }}"
+      color1_r: "{{result1[0]}}"
+      color1_g: "{{result1[1]}}"
+      color1_b: "{{result1[2]}}"
+    alias: Define F1 Team Colors for WLED
+  - data:
+      effect_id: "28"
+      color1_r: "{{color1_r}}"
+      color1_g: "{{color1_g}}"
+      color1_b: "{{color1_b}}"
+      color2_r: "{{color2_r}}"
+      color2_g: "{{color2_g}}"
+      color2_b: "{{color2_b}}"
+      color3_r: "{{color3_r}}"
+      color3_g: "{{color3_g}}"
+      color3_b: "{{color3_b}}"
+      intensity: "42"
+      speed: "20"
+      stop: "524"
+      transition: "7"
+      "on": "true"
+      brightness: "128"
+      rev: "true"
+    action: rest_command.wled_set_f1
+    alias: Push Data to WLED Strip

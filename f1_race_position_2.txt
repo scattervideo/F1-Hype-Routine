@@ -1,0 +1,27 @@
+{% set last_play = state_attr('sensor.norris', 'last_play') %}
+{% if last_play is not none %}
+  {% set driver_id = last_play.split(',') %}
+  {% if driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "M. Verstappen" %}4665
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Lawson" %}5741
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Sainz" %}4686
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "A. Albon" %}5592
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "C. Leclerc" %}5498
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Hamilton" %}868
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "F. Alonso" %}348
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Stroll" %}4775
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "E. Ocon" %}4678
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "O. Beaman" %}5789
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "P. Gasly" %}5501
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "J. Doohan" %}5746
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "L. Norris" %}5579
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "O. Piastri" %}5752
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "N. Hülkenberg" %}4396
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "G Bortoleto" %}5835
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "G. Russell" %}5503
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "A. Antonelli" %}5829
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "I Hadjar" %}5790
+  {% elif driver_id[1] | trim | regex_replace("^\\d+\\.\\s*", "") == "Y. Tsunoda" %}5652
+  {% endif %}
+{% else %}
+  Unknown driver or data unavailable
+{% endif %}
